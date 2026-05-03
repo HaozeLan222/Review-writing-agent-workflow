@@ -1,0 +1,29 @@
+# Private research materials
+workspace/
+papers/
+papers_txt/
+
+# Manuscripts and temporary outputs
+*_Draft_*.md
+*_Final_*.md
+*_Enhanced_*.md
+final_review*.md
+manuscript*.md
+temp_notes*.txt
+*.docx
+
+# Extracted text
+*.extracted.txt
+extracted_text/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
