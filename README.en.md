@@ -174,7 +174,7 @@ python scripts/merge_sections.py workspace/outputs/sec_1.md workspace/outputs/se
 
 ## Practical Tips
 
-- Start with 5 to 10 papers if this is your first run.
+- Start with 15 to 20 papers if this is your first run.
 - Review each phase before moving to the next one.
 - Verify critical metrics, experimental results, and method details against the original papers.
 - Treat the result as a review draft and field map, not a submission-ready manuscript.
