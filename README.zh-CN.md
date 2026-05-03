@@ -2,7 +2,7 @@
 
 # Evidence-Grounded Review Workflow
 
-**一个用于“给定论文集合 -> 中文综述初稿”的证据驱动 Agent 工作流**
+**一个用于“给定论文集合 -> 中英文综述初稿”的证据驱动 Agent 工作流**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB.svg)](https://www.python.org/)
@@ -15,15 +15,15 @@
 
 ## 项目简介
 
-本项目面向科研从业者、学生以及对某个研究方向感兴趣的读者，提供一套 **基于给定论文快速撰写中文综述初稿** 的 Agent 工作流。
+本项目面向科研从业者、学生以及对某个研究方向感兴趣的读者，提供一套 **基于给定论文快速撰写中文或英文综述初稿** 的 Agent 工作流。
 
 它的目标不是让模型“凭空写综述”，而是让 Agent 先阅读你提供的论文，建立文献索引和分类法，再进行证据摘记、分章节写作和引用核查。每个事实陈述都尽量通过 `[P01]`、`[P02]` 这样的引用锚点追踪到具体论文。
 
-适合用它来快速初步了解一个领域的研究现状、主要流派、方法差异、代表性工作和潜在研究空白。
+适合用它来快速初步了解一个领域的研究现状、主要流派、方法差异、代表性工作和潜在研究空白。你可以选择输出中文综述，也可以选择输出更符合英文论文写作习惯的 English literature review draft。
 
 ## 适用场景
 
-- 你手头已经有一批论文，希望快速整理出中文综述初稿。
+- 你手头已经有一批论文，希望快速整理出中文或英文综述初稿。
 - 你刚进入一个方向，想先可信地了解该领域有哪些主要方法流派。
 - 你需要把多篇论文组织成“研究现状、分类法、方法对比、局限与展望”。
 - 你希望 AI 辅助写作时尽量减少幻觉、错引和无来源判断。
@@ -48,7 +48,7 @@
    ↓
 证据摘记
    ↓
-分章节中文综述初稿
+分章节中英文综述初稿
    ↓
 引用闭环与风格修订
 ```
@@ -62,6 +62,7 @@
 ├── README.en.md                    # English documentation
 ├── TASK.md                         # Agent 执行协议
 ├── academic_style_zh.md            # 中文学术表达润色规则
+├── academic_style_en.md            # 英文学术综述写作规则
 ├── requirements.txt
 ├── scripts/
 │   ├── extract_text.py             # PDF 文本抽取脚本
@@ -122,14 +123,41 @@ python scripts/extract_text.py workspace/papers/paper_01.pdf workspace/extracted
 
 ### 4. 启动 Agent
 
-在 Cursor、Claude Code、Codex CLI 或其他支持读取项目文件的 Agent 环境中，打开本项目目录，然后向 Agent 发送类似下面的指令：
+先进入项目目录：
+
+```bash
+cd path/to/evidence-grounded-review-workflow
+```
+
+然后选择你正在使用的 Agent 工具。最稳妥的方式是进入交互模式后，把下面的启动提示词粘贴进去。
+
+常见启动方式：
+
+```bash
+# Cursor
+# 用 Cursor 打开本项目文件夹，然后在 Chat 面板切换到 Agent 模式。
+
+# Claude Code
+claude
+
+# Gemini CLI
+gemini
+
+# Codex CLI
+codex
+```
+
+不同 CLI 的参数可能会随版本变化，交互式启动最不容易出错。核心要求是：Agent 必须能读取当前项目里的 `TASK.md`、`academic_style_zh.md`、`academic_style_en.md`、`workspace/` 和 `templates/`。
+
+如果要生成中文综述，把下面这段发给 Agent：
 
 ```text
 请阅读 @TASK.md，并严格按照其中的 Phase 1 到 Phase 5 执行。
 
 我的综述主题是：「在这里填写你的综述主题」。
 请以 workspace/papers/ 和 workspace/extracted_text/ 中的论文材料为唯一事实来源，
-用中文撰写综述初稿。
+目标语言：中文。
+请用中文撰写综述初稿，并遵循 @academic_style_zh.md。
 
 要求：
 1. 先建立 workspace/outputs/01_master_index.md。
@@ -138,6 +166,38 @@ python scripts/extract_text.py workspace/papers/paper_01.pdf workspace/extracted
 4. 分章节输出到 workspace/outputs/。
 5. 最终合并为 workspace/outputs/final_review.md。
 6. 所有事实陈述必须带 [Pxx] 引用锚点。
+```
+
+如果要生成英文综述，把 `目标语言` 改成 English，并使用英文风格规则：
+
+```text
+Please read @TASK.md and strictly follow Phase 1 to Phase 5.
+
+My review topic is: "[fill in your review topic here]".
+Target language: English.
+Use only the papers and extracted text under workspace/ as evidence.
+Please draft an English literature review and follow @academic_style_en.md.
+
+Requirements:
+1. Create workspace/outputs/01_master_index.md first.
+2. Then create workspace/outputs/02_taxonomy.md.
+3. Before drafting each section, save evidence notes under workspace/notes/.
+4. Save section drafts under workspace/outputs/.
+5. Merge the final draft to workspace/outputs/final_review.md.
+6. Add [Pxx] citation anchors to all factual claims.
+7. Use neutral academic English, clear topic sentences, careful hedging, and review-appropriate structure.
+```
+
+语言选择只看提示词里的这一行：
+
+```text
+Target language: English.
+```
+
+或：
+
+```text
+目标语言：中文。
 ```
 
 如果你只想先生成索引，不想一次写完整综述，可以这样启动：
@@ -175,6 +235,7 @@ python scripts/merge_sections.py workspace/outputs/sec_1.md workspace/outputs/se
 - 每完成一个阶段，先人工检查再进入下一阶段。
 - 对关键数据、实验结论和方法细节，务必回到原文确认。
 - 把生成结果当作“综述初稿”和“领域地图”，不要直接当作可投稿终稿。
+- 英文输出时，建议额外检查段落主题句、时态、hedging、术语缩写和目标期刊引用格式。
 - 如果要公开项目，请只公开本仓库模板，不要公开 `workspace/`。
 
 ## 隐私与版权

@@ -1,76 +1,130 @@
 # TASK: Evidence-Grounded Review Writing Workflow
 
-本文件是一个通用的综述论文写作工作流模板，目标是帮助研究者在使用 AI 辅助写作时保持证据可追溯、引用可检查、章节可迭代。
+This file defines a reusable Agent protocol for drafting evidence-grounded literature reviews in either Chinese or English. The workflow is designed to keep claims traceable, citations auditable, and writing stages reviewable.
 
-请在开始一个新项目时复制本文件，并将方括号中的占位符替换为你的真实信息。不要把私有论文全文、未发表稿件或敏感课题信息提交到公开仓库。
-
----
-
-## 1. 角色设定
-
-你是一位严谨的学术研究助理。你的任务不是直接生成一篇完整综述，而是按照证据链逐步完成文献索引、分类法构建、章节起草、引用核查和最终整合。
-
-核心原则：
-
-- 所有事实陈述必须来自用户提供的文献材料。
-- 所有关键结论必须带有可追溯引用锚点。
-- 写作前必须先提取证据，不能只依赖摘要或二手概括。
-- 不允许编造论文、实验结果、数据集、指标或作者观点。
+Before starting a new project, copy this file or fill in the configuration below. Do not commit private papers, extracted full text, unpublished drafts, or sensitive research information to a public repository.
 
 ---
 
-## 2. 项目配置
+## 1. Role
 
-在每次新综述开始前，先填写以下信息：
+You are a rigorous academic research assistant. Your task is not to produce a one-shot review from memory. You must build the review step by step:
 
-- 综述主题：`[填写你的综述主题]`
-- 目标语言：`[中文/英文/其他]`
-- 文献目录：`papers/`
-- 文本抽取目录：`workspace/extracted_text/`
-- 输出目录：`workspace/outputs/`
-- 引用锚点格式：`[P01]`, `[P02]`, ...
-- 引用格式：`[APA / IEEE / GB/T 7714 / 其他]`
-- 是否允许使用外部资料：`[否/仅用于背景/允许但必须单独标注]`
+1. Read the provided paper set.
+2. Build a paper index.
+3. Construct a taxonomy and outline.
+4. Collect evidence notes before drafting.
+5. Draft section by section.
+6. Verify citation anchors and revise style.
+
+Core principles:
+
+- All factual claims must come from the provided paper materials.
+- Important claims must be linked to traceable citation anchors such as `[P01]`.
+- Before drafting a section, re-read the relevant paper evidence.
+- Do not fabricate papers, authors, datasets, metrics, results, or conclusions.
+- The target language must be followed consistently: Chinese or English.
 
 ---
 
-## 3. 全局约束
+## 2. Project Configuration
 
-### 3.1 证据边界
+Fill in the following fields before each run:
 
-正文中的事实、方法、实验结果、数据和横向比较，必须来源于已登记的文献材料。若需要使用外部资料，必须在项目配置中明确允许，并在正文中单独标注来源。
+- Review topic: `[your review topic]`
+- Target language: `[Chinese / English]`
+- Paper directory: `workspace/papers/`
+- Extracted text directory: `workspace/extracted_text/`
+- Notes directory: `workspace/notes/`
+- Output directory: `workspace/outputs/`
+- Citation anchor format: `[P01]`, `[P02]`, ...
+- Reference style: `[APA / IEEE / GB/T 7714 / ACM / Chicago / other]`
+- External sources: `[not allowed / background only / allowed with separate labeling]`
+- Target output type: `[field map / course report / survey draft / related work section / manuscript draft]`
 
-### 3.2 引用锚点
+---
 
-每篇文献分配一个稳定 ID，例如 `[P01]`。正文只要出现具体事实陈述，就应在句末或段末附上对应引用锚点。
+## 3. Global Rules
 
-示例：
+### 3.1 Evidence Boundary
+
+The body text must rely on registered papers and evidence notes. If external sources are allowed, they must be clearly labeled and must not be mixed with the provided paper set.
+
+### 3.2 Citation Anchors
+
+Assign each paper a stable ID such as `[P01]`. Any concrete claim about a method, experiment, dataset, result, limitation, or conclusion should carry a citation anchor.
+
+Chinese example:
 
 ```text
-某方法通过引入自动评估器来筛选候选算法，并使用反馈分数指导后续生成过程 [P03]。
+该方法通过自动评估器筛选候选算法，并使用反馈分数指导后续生成过程 [P03]。
 ```
 
-### 3.3 回溯阅读
+English example:
 
-在撰写任何章节前，必须根据该章节计划引用的文献 ID，重新读取相关论文的具体段落，并先记录证据摘记。禁止只凭初始索引或记忆直接起草。
+```text
+The method filters candidate algorithms with an automatic evaluator and uses feedback scores to guide subsequent generation [P03].
+```
 
-### 3.4 私密内容
+### 3.3 Re-reading Requirement
 
-以下内容默认不进入公开仓库：
+Before drafting a section, re-read the relevant papers or extracted text for that section and write evidence notes first. Do not draft only from the initial index, abstract-level summaries, or memory.
 
-- 原始 PDF 或受版权保护的全文抽取文本
-- 未发表论文草稿、投稿版本或课程作业成稿
-- 临时证据摘记和私有评语
-- 包含真实研究主题、导师要求、课程要求、投稿计划的文件
+### 3.4 Language-Specific Writing Standards
+
+#### Chinese Review Drafts
+
+For Chinese output:
+
+- Follow `academic_style_zh.md`.
+- Use standard Chinese academic prose.
+- Introduce key terms as `中文术语（English Full Name, Abbreviation）` when useful.
+- Avoid casual mixed Chinese-English expressions.
+- Keep citation anchors such as `[P01]` after factual claims.
+
+#### English Review Drafts
+
+For English output:
+
+- Follow `academic_style_en.md`.
+- Use clear academic English with a neutral, evidence-based tone.
+- Prefer concise topic sentences and logically connected paragraphs.
+- Avoid unsupported superlatives such as "groundbreaking", "revolutionary", or "state-of-the-art" unless directly supported by evidence.
+- Use review-appropriate verbs such as `proposes`, `reports`, `compares`, `extends`, `evaluates`, `observes`, and `suggests`.
+- Distinguish between what a paper demonstrates, claims, assumes, and leaves unresolved.
+- Keep citation anchors such as `[P01]` after factual claims.
+- Prefer conventional English review structure:
+  - Introduction
+  - Background or Problem Definition
+  - Taxonomy or Methodological Categories
+  - Methodological Review
+  - Comparative Analysis
+  - Applications or Empirical Findings
+  - Limitations and Open Challenges
+  - Future Directions
+  - Conclusion
+
+### 3.5 Private Content
+
+The following files should not be committed to public repositories:
+
+- Original PDFs or copyrighted full-text extractions.
+- Unpublished manuscripts or coursework drafts.
+- Temporary evidence notes and private comments.
+- Files that reveal private research topics, advisor comments, course requirements, or submission plans.
 
 ---
 
-## 4. 推荐目录结构
+## 4. Recommended Repository Layout
 
 ```text
 .
 ├── README.md
+├── README.zh-CN.md
+├── README.en.md
 ├── TASK.md
+├── academic_style_zh.md
+├── academic_style_en.md
 ├── templates/
 │   ├── 01_master_index.template.md
 │   ├── 02_taxonomy.template.md
@@ -80,105 +134,115 @@
 │   ├── extract_text.py
 │   └── merge_sections.py
 └── workspace/
-    ├── papers/              # 本地私有，不提交
-    ├── extracted_text/      # 本地私有，不提交
-    ├── notes/               # 本地私有，不提交
-    └── outputs/             # 本地私有，不提交
+    ├── papers/              # private, ignored by Git
+    ├── extracted_text/      # private, ignored by Git
+    ├── notes/               # private, ignored by Git
+    └── outputs/             # private, ignored by Git
 ```
 
 ---
 
-## 5. 执行流程
+## 5. Workflow
 
-### Phase 1: 建立文献索引
+### Phase 1: Build A Paper Index
 
-目标文件：`workspace/outputs/01_master_index.md`
+Output: `workspace/outputs/01_master_index.md`
 
-步骤：
+Steps:
 
-1. 遍历 `workspace/papers/` 中的文献。
-2. 为每篇文献分配 ID。
-3. 提取题名、作者、年份、研究问题、核心方法、实验设置、主要结论和可能引用位置。
-4. 每处理完一篇，立刻写入索引表，不要等全部读完再统一整理。
+1. Scan `workspace/papers/` and `workspace/extracted_text/`.
+2. Assign each paper a stable ID.
+3. Extract title, authors, year, research problem, method, experimental setting, main findings, limitations, and possible review sections.
+4. Write each paper into the index immediately after processing it.
 
-验收标准：
+Acceptance criteria:
 
-- 每篇文献都有稳定 ID。
-- 索引表能回答“这篇文献为什么重要、可以在哪一节引用”。
-- 没有未标注来源的结论。
+- Every paper has a stable ID.
+- The index explains why each paper matters and where it may be cited.
+- No unsupported conclusions are included.
+- The index language follows the configured target language.
 
-### Phase 2: 构建分类法和大纲
+### Phase 2: Build The Taxonomy And Outline
 
-目标文件：`workspace/outputs/02_taxonomy.md`
+Output: `workspace/outputs/02_taxonomy.md`
 
-步骤：
+Steps:
 
-1. 根据研究问题、方法路线、应用场景或理论贡献对文献分组。
-2. 说明分类法的依据，而不是只列清单。
-3. 为每个章节或小节列出计划引用的文献 ID。
+1. Group papers by research question, method family, application domain, theoretical contribution, or chronological development.
+2. Explain the classification rationale.
+3. For each planned section or subsection, list the paper IDs to be cited.
+4. Choose a structure that matches the target language and expected review type.
 
-验收标准：
+Acceptance criteria:
 
-- 分类标准清晰。
-- 每个小节都有对应证据来源。
-- 大纲能支撑一篇完整综述，而不是简单文献摘要合集。
+- The taxonomy has a clear organizing principle.
+- Each section has planned evidence sources.
+- The outline supports synthesis rather than a paper-by-paper summary.
 
-### Phase 3: 证据摘记与分块起草
+### Phase 3: Evidence Notes And Section Drafting
 
-目标目录：`workspace/notes/` 和 `workspace/outputs/`
+Outputs: `workspace/notes/` and `workspace/outputs/`
 
-每个小节按两步执行：
+For each section:
 
-1. 证据摘记：重新阅读相关文献，记录方法细节、实验设置、关键数据、作者原始结论和可比较点。
-2. 正文起草：只基于证据摘记撰写段落，并为事实陈述添加引用锚点。
+1. Evidence note: re-read relevant papers and record method details, assumptions, datasets, metrics, results, limitations, and comparison points.
+2. Drafting: write the section only from the evidence notes and add citation anchors to factual claims.
+3. Language check: apply the appropriate style guide:
+   - Chinese: `academic_style_zh.md`
+   - English: `academic_style_en.md`
 
-验收标准：
+Acceptance criteria:
 
-- 每个小节都有对应证据摘记。
-- 正文不是逐篇罗列，而是围绕问题、方法或争议展开综合评述。
-- 不存在无引用支撑的事实判断。
+- Each section has supporting evidence notes.
+- The draft synthesizes themes, methods, and debates rather than listing papers mechanically.
+- No factual claim lacks citation support.
+- The writing style matches the target language.
 
-### Phase 4: 整合与引用核查
+### Phase 4: Merge And Verify
 
-目标文件：`workspace/outputs/final_review.md`
+Output: `workspace/outputs/final_review.md`
 
-步骤：
+Steps:
 
-1. 合并各章节草稿。
-2. 扫描所有 `[Pxx]` 引用，确认每个 ID 已在文献索引中登记。
-3. 检查是否有文献被登记但未被实质引用。
-4. 统一术语、章节标题、图表编号和参考文献格式。
+1. Merge section drafts.
+2. Scan all `[Pxx]` anchors and confirm that each ID exists in the paper index.
+3. Check whether indexed papers are substantively used.
+4. Standardize terms, headings, figure/table labels, and reference style.
+5. For English drafts, check academic paragraph flow, tense consistency, hedging, and reference style.
+6. For Chinese drafts, check terminology consistency, sentence clarity, and Chinese-English term formatting.
 
-验收标准：
+Acceptance criteria:
 
-- 引用锚点闭环。
-- 术语前后一致。
-- 参考文献列表与正文引用一致。
+- Citation anchors are closed and traceable.
+- Terms and section titles are consistent.
+- The reference list matches in-text anchors.
+- The final draft follows the target language conventions.
 
-### Phase 5: 定点修订
+### Phase 5: Targeted Revision
 
-目标文件：`workspace/outputs/final_review_revised.md`
+Output: `workspace/outputs/final_review_revised.md`
 
-步骤：
+Steps:
 
-1. 根据人工反馈定位需要扩写、压缩或重写的章节。
-2. 回到原始文献重新取证。
-3. 只修改指定位置，避免无关重写造成引用漂移。
+1. Locate sections that need expansion, compression, or rewriting based on human feedback.
+2. Re-read the original evidence before revising.
+3. Modify only the targeted passages to avoid citation drift.
+4. Re-run citation and style checks.
 
-验收标准：
+Acceptance criteria:
 
-- 修改理由明确。
-- 新增内容有证据支撑。
-- 章节结构和引用一致性没有被破坏。
+- Revision reasons are clear.
+- New content is evidence-supported.
+- Section structure and citation consistency are preserved.
 
 ---
 
-## 6. 公开发布前检查
+## 6. Pre-Publication Checklist
 
-发布到 GitHub 或其他公开平台前，必须确认：
+Before publishing the repository:
 
-- `workspace/` 已被 `.gitignore` 忽略。
-- 没有上传原始论文、全文抽取文本、私有笔记或最终稿。
-- 模板中没有残留真实研究主题、文献标题、作者姓名、课程信息或投稿计划。
-- README 只描述通用方法，不展示私有项目结果。
-- 许可证、依赖和使用说明已经补齐。
+- `workspace/` is ignored by `.gitignore`.
+- No original papers, extracted full text, private notes, or drafts are committed.
+- Templates contain no real research topic, paper title, author name, course information, or submission plan.
+- README files describe only generic usage and do not reveal private project results.
+- License, dependencies, and usage instructions are included.
